@@ -1,0 +1,12 @@
+[project]
+name = "flash-dock"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "sh>=2.2.2",
+    "streamlit>=1.51.0",
+    "streamlit-molstar>=0.4.21",
+    "tqdm>=4.67.1",
+]
