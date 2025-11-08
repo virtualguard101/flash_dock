@@ -5,8 +5,15 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "ipython-genutils>=0.2.0",
+    "matplotlib>=3.10.7",
+    "py3dmol>=2.5.3",
+    "rdkit>=2025.9.1",
+    "seaborn",
     "sh>=2.2.2",
+    "stmol>=0.0.9",
     "streamlit>=1.51.0",
+    "streamlit-ketcher>=0.0.1",
     "streamlit-molstar>=0.4.21",
     "tqdm>=4.67.1",
 ]
