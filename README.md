@@ -25,8 +25,15 @@ pip install -r requirements.txt
    `./others/Uni-Mol/unimol_docking_v2/`
 
 3. Start the application using the following command:  
+
    ```bash
    streamlit run FlashDock.py
    ```
+
+   - Use uv:
+
+      ```bash
+      uv run streamlit run FlashDock.py
+      ```
 
 Ensure the file is in the correct location for the program to function properly.
