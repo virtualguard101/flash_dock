@@ -1,8 +1,10 @@
-import math,os,sys,torch
+import os
+import sys
+import torch
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import torch.nn as nn
 from layers import ProteinEGNN,LigandGAT,ProLig
-from nnutils import create_var, create_var_gpu
+from nnutils import create_var
 
 class PLANET(nn.Module):
     def __init__(self,feature_dims,nheads,key_dims,value_dims,pro_update_inters,lig_update_iters,pro_lig_update_iters,device):

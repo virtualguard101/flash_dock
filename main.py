@@ -16,7 +16,7 @@ import tempfile  # 用于创建临时文件
 import re
 # import tqdm
 
-# 如果没有在 session_state 中记录 page，就初始化一个默认值
+# 如果没有在 session_state 中记录 page,就初始化一个默认值
 if 'page' not in st.session_state:
     st.session_state['page'] = '主页'
 
@@ -58,7 +58,7 @@ if page == "主页":
 
     # 显示字符画
     try:
-        with open("./others/logo.txt", "r", encoding="utf-8") as file:
+        with open("./lib/logo.txt", "r", encoding="utf-8") as file:
             ascii_art = file.read()
             styled_ascii_art = ascii_art.replace(" ", "&nbsp;").replace("\n", "<br>")
             html_code = f"""
@@ -69,18 +69,18 @@ if page == "主页":
             st.markdown(html_code, unsafe_allow_html=True)
 
     except FileNotFoundError:
-        st.error("logo.txt 文件未找到，请确保它与脚本位于同一目录下。")
+        st.error("logo.txt 文件未找到,请确保它与脚本位于同一目录下")
     except UnicodeDecodeError:
-        st.error("无法解码 logo.txt 文件，请确认文件编码格式是否为 UTF-8。")
+        st.error("无法解码 logo.txt 文件,请确认文件编码格式是否为 UTF-8")
 
     # 在字符画和图片之间插入若干空行
     st.markdown("<br><br><br><br><br>", unsafe_allow_html=True)
 
     # 显示 logo.png
-    if os.path.exists("./others/logo.png"):
-        st.image("./others/logo.png", use_container_width=True)
+    if os.path.exists("./lib/logo.png"):
+        st.image("./lib/logo.png", use_container_width=True)
     else:
-        st.error("logo.png 文件未找到，请确保它与脚本位于同一目录下。")
+        st.error("logo.png 文件未找到,请确保它位于 lib 目录下")
 
 # ------------------------------------------------------------------------------
 # 准备配体
@@ -96,11 +96,11 @@ elif page == "准备配体":
     from streamlit_ketcher import st_ketcher
 
     # 1. 允许用户上传一个 SDF 文件
-    st.info("请上传一个 SDF 文件，或在画布中绘制分子结构/粘贴SMILES")
-    st.markdown("**上传**分子文件（SDF 格式）：")
+    st.info("请上传一个 SDF 文件,或在画布中绘制分子结构/粘贴SMILES")
+    st.markdown("**上传**分子文件 (SDF 格式): ")
     sdf_file = st.file_uploader("", type=["sdf"])
     # 2. 允许用户使用 Ketcher 绘制或输入 SMILES
-    st.markdown("**或者** 在下方绘制分子结构/粘贴SMILES：")
+    st.markdown("**或者** 在下方绘制分子结构/粘贴SMILES: ")
     smiles_input = st_ketcher()
 
     def process_and_show_mol(
@@ -111,8 +111,8 @@ elif page == "准备配体":
         """
         对分子进行加氢、3D 嵌入、MMFF 优化并展示 2D/3D 结构；
         根据不同来源决定最终保存的文件名：
-        - 如果有 uploaded_sdf_name，则用 "原文件名去除.sdf + '_prepared.sdf'"
-        - 如果没有 uploaded_sdf_name，但用户给了自定义文件名，则用 "用户自定义文件名 + '.sdf'"
+        - 如果有 uploaded_sdf_name, 则用 "原文件名去除.sdf + '_prepared.sdf'"
+        - 如果没有 uploaded_sdf_name, 但用户给了自定义文件名, 则用 "用户自定义文件名 + '.sdf'"
         """
         if not mol:
             return
@@ -135,23 +135,23 @@ elif page == "准备配体":
         xyzview.zoomTo()
         showmol(xyzview, height=400, width=500)
 
-        # 提供保存按钮，将 3D 结构写出为 SDF 文件
+        # 提供保存按钮,将 3D 结构写出为 SDF 文件
         if st.button("保存 3D 结构为 SDF"):
-            os.makedirs("./Result/Prepare_Ligand", exist_ok=True)
+            os.makedirs("./result/Prepare_Ligand", exist_ok=True)
 
             if uploaded_sdf_name:
-                # 如果用户上传了 SDF，就使用该 SDF 名（去 .sdf）并加上 _prepared
+                # 如果用户上传了 SDF,就使用该 SDF 名（去 .sdf）并加上 _prepared
                 base_name = os.path.splitext(uploaded_sdf_name)[0]
                 out_filename = base_name + "_prepared.sdf"
             else:
-                # 如果没有上传的 SDF，就使用用户输入的文件名（不含 .sdf 后缀），再加上 .sdf
+                # 如果没有上传的 SDF,就使用用户输入的文件名（不含 .sdf 后缀）,再加上 .sdf
                 if user_defined_filename:
                     out_filename = user_defined_filename.strip() + ".sdf"
                 else:
-                    # 如果用户也没有输入任何自定义文件名，可给一个默认值
+                    # 如果用户也没有输入任何自定义文件名,可给一个默认值
                     out_filename = "ligand_3d.sdf"
 
-            sdf_path = os.path.join("./Result/Prepare_Ligand", out_filename)
+            sdf_path = os.path.join("./result/Prepare_Ligand", out_filename)
             writer = Chem.SDWriter(sdf_path)
             writer.write(mol_3d)
             writer.close()
@@ -169,26 +169,26 @@ elif page == "准备配体":
             if len(mols) > 0:
                 mol_from_sdf = mols[0]
             else:
-                st.error("无法从 SDF 文件中解析出分子，请检查文件格式或内容。")
+                st.error("无法从 SDF 文件中解析出分子,请检查文件格式或内容")
         except Exception as e:
             st.error(f"读取 SDF 文件出现错误: {e}")
 
     if mol_from_sdf:
-        # 如果成功解析出上传的 SDF，则展示并保存
+        # 如果成功解析出上传的 SDF,则展示并保存
         process_and_show_mol(mol_from_sdf, uploaded_sdf_name=uploaded_sdf_name)
     else:
-        # 如果用户没有上传 SDF 或上传的 SDF 解析失败，则查看 Ketcher 中有没有输入 SMILES
+        # 如果用户没有上传 SDF 或上传的 SDF 解析失败,则查看 Ketcher 中有没有输入 SMILES
         if smiles_input:
             mol_from_smiles = Chem.MolFromSmiles(smiles_input)
             if mol_from_smiles:
-                user_defined_filename = st.text_input("请输入保存时的 SDF 文件名（不含 .sdf）", value="my_mol")
+                user_defined_filename = st.text_input("请输入保存时的 SDF 文件名 (不含`.sdf`): ", value="my_mol")
                 process_and_show_mol(
                     mol_from_smiles, 
                     uploaded_sdf_name=None, 
                     user_defined_filename=user_defined_filename
                 )
             else:
-                st.error("SMILES 无效，请重新输入或确认格式。")
+                st.error("SMILES 无效,请重新输入或确认格式")
 
 # ------------------------------------------------------------------------------
 # 口袋预测
@@ -204,7 +204,7 @@ elif page == "口袋预测":
 
     if option == "上传蛋白质":
         try:
-            # 用户上传蛋白质（只出现一次，不会再弹二次上传）
+            # 用户上传蛋白质（只出现一次,不会再弹二次上传）
             pdb_file = st.file_uploader("请上传蛋白质文件 (.pdb)", type=["pdb"])
             
             if pdb_file is not None:
@@ -217,10 +217,10 @@ elif page == "口袋预测":
                     tmp.flush()
                     file_path = tmp.name
 
-                # 调用 p2rank (或其他函数) ，读取该临时文件进行预测
+                # 调用 p2rank (或其他函数) ,读取该临时文件进行预测
                 selected = select_pocket_from_local_protein(
                     file_path,
-                    p2rank_home='./others/p2rank_2.5/'
+                    p2rank_home='./utils/p2rank_2.5/'
                 )
                 # 预测完成后删除该临时文件
                 os.remove(file_path)
@@ -231,7 +231,7 @@ elif page == "口袋预测":
 
                     # 如果 rank=1 的口袋
                     if pocket['rank'] == '1':
-                        # 如果上传了文件名，则用之，否则用 pocket['name']
+                        # 如果上传了文件名,则用之,否则用 pocket['name']
                         final_name = uploaded_pdb_filename if uploaded_pdb_filename else pocket['name']
                         data = {
                             'Pocket Name': [final_name],
@@ -239,13 +239,13 @@ elif page == "口袋预测":
                         }
                         df = pd.DataFrame(data)
 
-                        st.write("最优口袋信息预览：")
+                        st.write("最优口袋信息预览: ")
                         st.dataframe(df)
 
-                        # 用户点击按钮后，才将CSV保存到指定文件夹
+                        # 用户点击按钮后,才将CSV保存到指定文件夹
                         if st.button("保存 best_pocket.csv"):
-                            os.makedirs("./Result/Predict_Pocket", exist_ok=True)
-                            csv_path = "./Result/Predict_Pocket/best_pocket.csv"
+                            os.makedirs("./result/Predict_Pocket", exist_ok=True)
+                            csv_path = "./result/Predict_Pocket/best_pocket.csv"
                             df.to_csv(csv_path, index=False)
                             st.success(f"best_pocket.csv 已保存到 {csv_path}")
 
@@ -259,7 +259,7 @@ elif page == "口袋预测":
             # 调用 p2rank 做预测
             selected = select_pocket_from_local_protein(
                 "examples/pocket/protein.pdb", 
-                p2rank_home='./others/p2rank_2.5/'
+                p2rank_home='./utils/p2rank_2.5/'
             )
             if selected:
                 pocket = selected
@@ -272,12 +272,12 @@ elif page == "口袋预测":
                     }
                     df = pd.DataFrame(data)
 
-                    st.write("最优口袋信息预览：")
+                    st.write("最优口袋信息预览: ")
                     st.dataframe(df)
 
                     if st.button("保存 best_pocket.csv"):
-                        os.makedirs("./Result/Predict_Pocket", exist_ok=True)
-                        csv_path = "./Result/Predict_Pocket/best_pocket.csv"
+                        os.makedirs("./result/Predict_Pocket", exist_ok=True)
+                        csv_path = "./result/Predict_Pocket/best_pocket.csv"
                         df.to_csv(csv_path, index=False)
                         st.success(f"best_pocket.csv 已保存到 {csv_path}")
                         
@@ -293,14 +293,14 @@ elif page == "分子对接":
     # import shutil
 
     st.title("分子对接")
-    st.write("请上传蛋白质 (PDB 格式) 和配体 (SDF 格式)，并设置对接参数。")
+    st.write("请上传蛋白质 (PDB 格式) 和配体 (SDF 格式),并设置对接参数")
 
     # 让用户上传蛋白质和配体文件
     protein_file = st.file_uploader("上传蛋白质文件 (.pdb)", type=["pdb"])
     ligand_file = st.file_uploader("上传配体文件 (.sdf)", type=["sdf"])
 
     # 让用户上传口袋预测结果文件（可选）
-    st.write("可选：上传口袋预测结果 CSV 文件，将自动填充对接网格参数。")
+    st.write("可选：上传口袋预测结果 CSV 文件,将自动填充对接网格参数")
     pocket_csv_file = st.file_uploader("上传口袋预测结果文件 (CSV)", type=["csv"])
 
     # 默认网格参数
@@ -319,15 +319,15 @@ elif page == "分子对接":
                     if len(coords) == 3:
                         center_x, center_y, center_z = coords
                     else:
-                        st.warning("CSV 文件中的 Center 格式不正确，无法自动填充网格参数。")
+                        st.warning("CSV 文件中的 Center 格式不正确,无法自动填充网格参数")
                 else:
-                    st.warning("CSV 文件中的 Center 格式不正确，无法自动填充网格参数。")
+                    st.warning("CSV 文件中的 Center 格式不正确,无法自动填充网格参数")
             else:
-                st.warning("CSV 文件中未找到 Center 列，无法自动填充网格参数。")
+                st.warning("CSV 文件中未找到 Center 列,无法自动填充网格参数")
         except Exception as e:
             st.error(f"读取 CSV 文件时出现错误: {e}")
 
-    # 显示网格参数输入框，无论是否上传 CSV 文件
+    # 显示网格参数输入框,无论是否上传 CSV 文件
     st.subheader("设置对接口袋参数")
     center_x = st.number_input("Center X", value=center_x)
     center_y = st.number_input("Center Y", value=center_y)
@@ -337,11 +337,11 @@ elif page == "分子对接":
     size_y = st.number_input("Size Y", value=100.0)
     size_z = st.number_input("Size Z", value=100.0)
 
-    # 当用户点击“开始分子对接”时，生成 docking_grid.json 文件并调用对接命令
+    # 当用户点击“开始分子对接”时,生成 docking_grid.json 文件并调用对接命令
     if st.button("开始分子对接"):
-        # 如果没有上传蛋白质或配体，提示错误
+        # 如果没有上传蛋白质或配体,提示错误
         if not protein_file or not ligand_file:
-            st.error("请先上传蛋白质 (pdb) 和配体 (sdf) 文件。")
+            st.error("请先上传蛋白质 (pdb) 和配体 (sdf) 文件")
         else:
             try:
                 # 创建临时文件夹保存缓存文件
@@ -370,12 +370,12 @@ elif page == "分子对接":
                         f.write(ligand_file.getvalue())
 
                     # 设置结果保存目录
-                    result_dir = "./Result/Docking_Result"
+                    result_dir = "./result/Docking_Result"
                     os.makedirs(result_dir, exist_ok=True)
 
                     # 构造命令
                     command = (
-                        f"python ./others/Uni-Mol/unimol_docking_v2/interface/demo.py "
+                        f"python ./models/Uni-Mol/unimol_docking_v2/interface/demo.py "
                         f"--mode single "
                         f"--conf-size 10 "
                         f"--cluster "
@@ -385,7 +385,7 @@ elif page == "分子对接":
                         f"--output-ligand-name ligand_predict "
                         f"--output-ligand-dir {result_dir} "
                         f"--steric-clash-fix "
-                        f"--model-dir ./others/Uni-Mol/unimol_docking_v2/unimol_docking_v2_240517.pt"
+                        f"--model-dir ./models/Uni-Mol/unimol_docking_v2/unimol_docking_v2_240517.pt"
                     )
 
                     # 执行命令
@@ -393,10 +393,10 @@ elif page == "分子对接":
 
                     # 根据命令返回值判断是否执行成功
                     if result.returncode == 0:
-                        st.success("分子对接完成！")
+                        st.success("分子对接完成!")
                         st.text_area("对接输出日志", value=result.stdout, height=150)
 
-                        # 分子对接完成后，处理结果文件
+                        # 分子对接完成后,处理结果文件
                         try:
                             ligand_output_path = os.path.join(result_dir, "ligand_predict.sdf")
 
@@ -447,13 +447,13 @@ elif page == "批量口袋预测与对接":
     st.title("批量口袋预测与分子对接")
 
     # 定义固定路径
-    batch_docking_dir = Path("./Batch_Docking")
-    result_dir = Path("./Batch_Docking")
+    batch_docking_dir = Path("./batch_docking/input")
+    result_dir = Path("./batch_docking/input")
     result_dir.mkdir(parents=True, exist_ok=True)
 
     # 检查 Batch_Docking 目录是否存在
     if not batch_docking_dir.exists():
-        st.error(f"目录 {batch_docking_dir} 不存在。请创建该目录并添加 PDB 和 SDF 文件。")
+        st.error(f"目录 {batch_docking_dir} 不存在请创建该目录并添加 PDB 和 SDF 文件")
     else:
         # 自动生成任务 CSV 文件
         def generate_task_csv():
@@ -461,10 +461,10 @@ elif page == "批量口袋预测与对接":
             sdf_files = list(batch_docking_dir.glob("*.sdf"))
 
             if not pdb_files:
-                st.error("在 ./Batch_Docking 文件夹中未找到 PDB 文件。请添加至少一个 PDB 文件。")
+                st.error("在 ./batch_docking/input 文件夹中未找到 PDB 文件请添加至少一个 PDB 文件")
                 return None
             if not sdf_files:
-                st.error("在 ./Batch_Docking 文件夹中未找到 SDF 文件。请添加至少一个 SDF 文件。")
+                st.error("在 ./batch_docking/input 文件夹中未找到 SDF 文件请添加至少一个 SDF 文件")
                 return None
 
             tasks = []
@@ -494,9 +494,9 @@ elif page == "批量口袋预测与对接":
 
             st.markdown("---")
             st.info("""
-                1. 下载上方的任务 CSV 文件。
-                2. 在本地编辑 CSV 文件，修改 `Run` 列为 `Yes` 的任务将被执行，`No` 列的任务将被跳过。
-                3. 修改完成后，上传修改后的 CSV 文件并点击“开始批量预测和对接”按钮。
+                1. 下载上方的任务 CSV 文件
+                2. 在本地编辑 CSV 文件,修改 `Run` 列为 `Yes` 的任务将被执行,`No` 列的任务将被跳过
+                3. 修改完成后,上传修改后的 CSV 文件并点击“开始批量预测和对接”按钮
             """)
 
             # 上传修改后的任务 CSV 文件
@@ -515,9 +515,9 @@ elif page == "批量口袋预测与对接":
                         tasks_to_run = uploaded_tasks_df[uploaded_tasks_df["Run"].str.lower() == "yes"]
 
                         if tasks_to_run.empty:
-                            st.warning("没有任务需要运行，请确保至少有一项任务的 `Run` 列为 `Yes`。")
+                            st.warning("没有任务需要运行,请确保至少有一项任务的 `Run` 列为 `Yes`")
                         else:
-                            st.write(f"发现 {len(tasks_to_run)} 个任务需要运行。")
+                            st.write(f"发现 {len(tasks_to_run)} 个任务需要运行")
 
                             # 显示需要运行的任务表格
                             st.subheader("待运行的任务列表")
@@ -571,7 +571,7 @@ elif page == "批量口袋预测与对接":
 
                                             # 构造对接命令
                                             command = (
-                                                f"python ./others/Uni-Mol/unimol_docking_v2/interface/demo.py "
+                                                f"python ./models/Uni-Mol/unimol_docking_v2/interface/demo.py "
                                                 f"--mode single "
                                                 f"--conf-size 10 "
                                                 f"--cluster "
@@ -581,7 +581,7 @@ elif page == "批量口袋预测与对接":
                                                 f"--output-ligand-name ligand_predict "
                                                 f"--output-ligand-dir {result_dir} "
                                                 f"--steric-clash-fix "
-                                                f"--model-dir ./others/Uni-Mol/unimol_docking_v2/unimol_docking_v2_240517.pt"
+                                                f"--model-dir ./models/Uni-Mol/unimol_docking_v2/unimol_docking_v2_240517.pt"
                                             )
 
                                             # 执行对接命令
@@ -594,28 +594,28 @@ elif page == "批量口袋预测与对接":
 
                                                 try:
                                                     os.rename(ligand_output_path, renamed_path)
-                                                    log_messages.append(f"任务 {task['Protein']} 和 {task['Ligand']} 对接完成。结果保存为 {renamed_path}")
+                                                    log_messages.append(f"任务 {task['Protein']} 和 {task['Ligand']} 对接完成结果保存为 {renamed_path}")
                                                 except Exception as e:
                                                     log_messages.append(f"任务 {task['Protein']} 和 {task['Ligand']} 结果保存失败：{e}")
                                             else:
-                                                log_messages.append(f"任务 {task['Protein']} 和 {task['Ligand']} 对接失败。错误信息：{result.stderr}")
+                                                log_messages.append(f"任务 {task['Protein']} 和 {task['Ligand']} 对接失败错误信息：{result.stderr}")
 
                                     else:
-                                        log_messages.append(f"任务 {task['Protein']} 的口袋信息未找到。")
+                                        log_messages.append(f"任务 {task['Protein']} 的口袋信息未找到")
 
                                     # 更新进度条
                                     progress_bar.progress((i + 1) / len(tasks_to_run))
 
                                 # 所有任务完成后更新状态
-                                status_text.text("所有任务已完成。")
+                                status_text.text("所有任务已完成")
 
                                 # 显示日志
-                                st.success("所有任务已完成。")
+                                st.success("所有任务已完成")
                                 st.text_area("任务日志", value="\n".join(log_messages), height=300)
                 except pd.errors.EmptyDataError:
-                    st.error("上传的 CSV 文件为空，请检查文件内容。")
+                    st.error("上传的 CSV 文件为空,请检查文件内容")
                 except pd.errors.ParserError:
-                    st.error("上传的 CSV 文件格式错误，请确保文件为有效的 CSV 格式。")
+                    st.error("上传的 CSV 文件格式错误,请确保文件为有效的 CSV 格式")
                 except Exception as e:
                     st.error(f"读取任务文件时出错：{e}")
 
@@ -635,7 +635,7 @@ elif page == "预测亲和力":
 
     if page == "预测亲和力":
         st.title("预测亲和力")
-        st.write("在此页面，你可以进行小分子与蛋白质的结合亲和力预测。选择单个预测或批量预测模式。")
+        st.write("在此页面,你可以进行小分子与蛋白质的结合亲和力预测选择单个预测或批量预测模式")
 
         # 模式选择
         mode = st.radio("选择模式", ("单个预测", "批量预测"))
@@ -652,11 +652,11 @@ elif page == "预测亲和力":
             # 按钮触发预测
             if st.button("开始预测"):
                 if protein_file is None:
-                    st.error("请上传蛋白质 PDB 文件。")
+                    st.error("请上传蛋白质 PDB 文件")
                 elif ligand_file is None:
-                    st.error("请上传小分子 SDF 文件。")
+                    st.error("请上传小分子 SDF 文件")
                 else:
-                    with st.spinner("正在进行亲和力预测，请稍候..."):
+                    with st.spinner("正在进行亲和力预测,请稍候..."):
                         try:
                             # 创建临时目录
                             with tempfile.TemporaryDirectory() as tmpdir:
@@ -674,7 +674,7 @@ elif page == "预测亲和力":
                                 output_csv_path = os.path.join(tmpdir, "single_prediction.csv")
 
                                 # 调用预测脚本
-                                pred_dir = "./others/PLANET"
+                                pred_dir = "./models/PLANET"
                                 pred_script = "pred.py"
                                 pred_script_path = os.path.join(pred_dir, pred_script)
 
@@ -694,10 +694,10 @@ elif page == "预测亲和力":
                                 else:
                                     if os.path.exists(output_csv_path):
                                         df = pd.read_csv(output_csv_path)
-                                        st.success("预测完成！结果如下：")
+                                        st.success("预测完成! 结果如下: ")
                                         st.dataframe(df)
                                     else:
-                                        st.error("预测完成但未找到输出 CSV 文件。")
+                                        st.error("预测完成但未找到输出 CSV 文件")
                         except Exception as e:
                             st.error(f"发生异常: {e}")
 
@@ -706,11 +706,11 @@ elif page == "预测亲和力":
 
             # 按钮触发预测
             if st.button("开始批量预测"):
-                with st.spinner("正在进行批量亲和力预测，请稍候..."):
+                with st.spinner("正在进行批量亲和力预测,请稍候..."):
                     try:
-                        batch_dir = "./Batch_Docking_Result"
+                        batch_dir = "./batch_docking/output"
                         if not os.path.exists(batch_dir):
-                            st.error("批量预测目录不存在。")
+                            st.error("批量预测目录不存在")
                         else:
                             final_results = []
 
@@ -739,7 +739,7 @@ elif page == "预测亲和力":
 
                                         cmd = [
                                             "python",
-                                            "./others/PLANET/pred.py",
+                                            "./models/PLANET/pred.py",
                                             "-p", pdb_file,
                                             "-l", sdf_file_path,
                                             "-m", sdf_file_path,
@@ -758,7 +758,7 @@ elif page == "预测亲和力":
                                                     "Binding_Affinity": binding_affinity
                                                 })
                                         else:
-                                            st.error(f"文件 {sdf_file} 处理失败。")
+                                            st.error(f"文件 {sdf_file} 处理失败")
 
                                 # 更新进度条
                                 progress_bar.progress((i + 1) / total_files)
@@ -794,7 +794,7 @@ elif page == "预测亲和力":
                                 st.write(heatmap_path)
 
                             else:
-                                st.error("未生成任何预测结果。")
+                                st.error("未生成任何预测结果")
                     except Exception as e:
                         st.error(f"发生异常: {e}")
 

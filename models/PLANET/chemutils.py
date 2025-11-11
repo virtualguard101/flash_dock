@@ -1,16 +1,7 @@
-from operator import le
-from numpy.core.fromnumeric import shape
-import pandas as pd
-import rdkit,os
+import os
 import rdkit.Chem as Chem
-from rdkit.Chem import AllChem
 from rdkit.Chem import Descriptors
 from rdkit.Chem.QED import qed
-from scipy.sparse import coo, csr_matrix
-from scipy.sparse.csgraph import minimum_spanning_tree
-from collections import defaultdict
-from rdkit.Chem.EnumerateStereoisomers import EnumerateStereoisomers, StereoEnumerationOptions
-#from vocab import Vocab
 import numpy as np
 import torch
 from typing import List,Tuple
@@ -115,7 +106,7 @@ class ProteinPocket():
             try:
                 residue_content = [line for line in pdb_content if str(line[22:27]).strip()==index and line[21] == chain]
                 self.pocket_residues.append(Residue(residue_content))
-            except:
+            except Exception:
                 continue
 
 class ComplexPocket():
@@ -145,7 +136,7 @@ class ComplexPocket():
             try:
                 residue_content = [line for line in pdb_content if str(line[22:27]).strip()==index and line[21] == chain]
                 self.pocket_residues.append(Residue(residue_content))
-            except:
+            except Exception:
                 continue
         
         self.pro_lig_interaction = self.get_interaction_label()

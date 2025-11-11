@@ -1,5 +1,7 @@
 import rdkit.Chem as Chem
-import torch,sys,os
+import torch
+import sys
+import os
 import numpy as np
 import pandas as pd
 from torch.utils.data import Dataset, DataLoader
@@ -17,14 +19,14 @@ class PlanetEstimator():
     def set_pocket_from_ligand(self,protein_pdb,ligand_sdf):
         try:
             self.pocket = ProteinPocket(protein_pdb=protein_pdb,ligand_sdf=ligand_sdf)
-        except:
+        except Exception:
             raise RuntimeError('the protein pdb file need to be fixed')
         self.res_features = self.model.cal_res_features_helper(self.pocket.res_features,self.pocket.alpha_coordinates)
 
     def set_pocket_from_coordinate(self,protein_pdb,centeriod_x,centeriod_y,centeriod_z):
         try:
             self.pocket = ProteinPocket(protein_pdb,centeriod_x,centeriod_y,centeriod_z)
-        except:
+        except Exception:
             raise RuntimeError('the protein pdb file need to be fixed')
         self.res_features = self.model.cal_res_features_helper(self.pocket.res_features,self.pocket.alpha_coordinates)
 
@@ -52,7 +54,7 @@ class VS_SDF_Dataset(Dataset):
             mol_feature_batch = mol_batch_to_graph(mol_batch)
             mol_smiles = [Chem.MolToSmiles(Chem.RemoveHs(mol)) for mol in mol_batch if mol is not None]
             return (mol_feature_batch,mol_smiles,mol_names)
-        except:
+        except Exception:
             return (None,None,None)
 
     def mol_index_from_sdf(self):
@@ -127,7 +129,7 @@ def workflow(protein_pdb,mol_file,ligand_sdf=None,centeriod_x=None,centeriod_y=N
                 predicted_affinities.append((predicted_affinity.view([-1]).cpu().numpy()))
                 smis.extend(smi_batch)
                 mol_names.extend(mol_name)
-            except:
+            except Exception:
                 continue
     predicted_affinities = np.concatenate(predicted_affinities)
     return predicted_affinities,mol_names,smis
@@ -145,7 +147,7 @@ def result_to_csv_sdf(predicted_affinities,mol_names,smis,prefix=None):
             mol.SetProp('PLANET_affinity', '{:.3f}'.format(aff))
             mol.SetProp('_Name',name)
             writer.write(mol) 
-        except:
+        except Exception:
             continue
     writer.close()
     csv_frame = pd.DataFrame([

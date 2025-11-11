@@ -1,10 +1,7 @@
-from asyncio import coroutines
-from venv import create
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-import math,sys
-from nnutils import create_var
+import math
 from nnutils import index_select_ND
 
 class ProteinGAT(nn.Module):

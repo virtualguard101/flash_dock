@@ -4,11 +4,8 @@ import torch
 import numpy as np
 from rdkit import Chem
 from torch.utils.data import Dataset, DataLoader
-from tqdm import tqdm  # 进度条库
 from PLANET_model import PLANET
 from chemutils import ProteinPocket, mol_batch_to_graph
-import rdkit.Chem as Chem
-import sys
 from rdkit import RDLogger
 import argparse
 
@@ -61,7 +58,7 @@ class SingleMoleculeDataset(Dataset):
             mol_smiles = Chem.MolToSmiles(Chem.RemoveHs(mol))
             mol_name = mol.GetProp('_Name') if mol.HasProp('_Name') else 'Unnamed'
             return (mol_feature, mol_smiles, mol_name)
-        except:
+        except Exception:
             return (None, None, None)
 
 def workflow(protein_pdb, ligand_sdf, mol_file, device):

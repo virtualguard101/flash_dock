@@ -1,11 +1,14 @@
+import os
+import argparse
+import pickle
+import random
+
 from typing import List
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 import pandas as pd
-import os,argparse,pickle,sys,random
-from chemutils import ComplexPocket,tensorize_all,role_of_5
+from chemutils import ComplexPocket,tensorize_all
 import numpy as np
 from rdkit import Chem
-import rdkit
 from itertools import chain
 
 class ProLigDataset(Dataset):
@@ -93,7 +96,7 @@ if __name__ == "__main__":
                         Chem.SanitizeMol(ligand_mol)
                         #if role_of_5(ligand_mol):
                         dataset.append([os.path.join(pdb_dir,sub_folder,pdb_code,'{}_pocket.pkl'.format(pdb_code)),pK])
-                    except:
+                    except Exception:
                         continue
                 elif sub_folder == 'extend' and len(pocket.pocket_residues) < 30:
                     continue

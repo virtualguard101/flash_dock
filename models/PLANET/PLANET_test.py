@@ -1,11 +1,11 @@
+import pickle
 import torch
-import torch.nn as nn
 from torch.utils.data import DataLoader
 from PLANET_model import PLANET
 from PLANET_datautils import ProLigDataset
 import numpy as np
 import scipy.stats as stats
-import argparse,math,rdkit,os,pickle
+import argparse
 
 def test_PLANET(PLANET,test_pickle):
     test_dataset = ProLigDataset(test_pickle,batch_size=16,shuffle=False,decoy_flag=False)

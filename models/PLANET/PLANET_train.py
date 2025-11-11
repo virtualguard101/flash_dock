@@ -2,10 +2,11 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.optim.lr_scheduler as lr_scheduler
-from torch.utils.data import DataLoader,RandomSampler
+from torch.utils.data import DataLoader
 from PLANET_datautils import ProLigDataset
 from PLANET_model import PLANET
-import argparse,math,rdkit,os,sys,pickle
+import argparse
+import sys
 import numpy as np
 from rdkit import RDLogger
 
@@ -136,7 +137,7 @@ if __name__ == '__main__':
                             valid_batch_count += 1
                             valid_meters = valid_meters + np.array([lig_interaction_loss.item(),lig_interaction_acc.item(),pro_lig_interaction_loss.item(),\
                                 pro_lig_interaction_acc.item(),affinity_loss.item(),affinity_mae.item()])
-                        except:
+                        except Exception:
                             continue
                     valid_meters /= valid_batch_count
                     print ("[Valid_{}]\tLig_L:{:.3f}\tLig_ACC:{:.3f}\tProLig_L:{:.3f}\tProLig_ACC:{:.3f}\tAffinity_L:{:.3f}\tMAE:{:.3f}" \
@@ -155,7 +156,7 @@ if __name__ == '__main__':
                             test_batch_count += 1
                             test_meters =  test_meters + np.array([lig_interaction_loss.item(),lig_interaction_acc.item(),pro_lig_interaction_loss.item(),\
                                 pro_lig_interaction_acc.item(),affinity_loss.item(),affinity_mae.item()])
-                        except:
+                        except Exception:
                             continue
                     test_meters /= test_batch_count
                     print ("[Test_{}]\tLig_L:{:.3f}\tLig_ACC:{:.3f}\tProLig_L:{:.3f}\tProLig_ACC:{:.3f}\tAffinity_L:{:.3f}\tMAE:{:.3f}" \
