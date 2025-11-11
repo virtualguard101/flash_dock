@@ -153,12 +153,6 @@ flowchart LR
     B --> C[局部特征提取]
     C --> D[随机森林打分]
     D --> E[聚类成口袋]
-    
-    style A fill:#e1f5ff
-    style B fill:#ffe1e1
-    style C fill:#fff4e1
-    style D fill:#e1ffe1
-    style E fill:#ffe1f5
 ```
 
 ##### 详细步骤
@@ -255,12 +249,6 @@ graph TB
         
         Pose --> Output["对接姿态坐标"]
     end
-    
-    style Protein fill:#e1f5ff
-    style Ligand fill:#ffe1e1
-    style Pair fill:#fff4e1
-    style Pose fill:#e1ffe1
-    style Output fill:#ffe1f5
 ```
 
 ##### 关键技术
@@ -376,11 +364,6 @@ graph TB
         LigandGAT --> ProLig
         ProLig --> Output
     end
-    
-    style ProteinEGNN fill:#e1f5ff
-    style LigandGAT fill:#ffe1e1
-    style ProLig fill:#fff4e1
-    style Output fill:#e1ffe1
 ```
 
 #### 详细组件分析
@@ -479,15 +462,6 @@ flowchart TB
     F --> G["6. 消息聚合"]
     D --> G
     G --> H["7. 多头融合"]
-    
-    style A fill:#e1f5ff
-    style B fill:#ffe1e1
-    style C fill:#ffe1e1
-    style D fill:#ffe1e1
-    style E fill:#fff4e1
-    style F fill:#e1ffe1
-    style G fill:#ffe1f5
-    style H fill:#e1f5ff
 ```
 
 1. 查询：$Q_i = Linear_Q(h_i)$
@@ -962,10 +936,6 @@ flash_dock/
 ```mermaid
 flowchart LR
     A[用户输入] --> B[自动处理] --> C[结果输出]
-    
-    style A fill:#e1f5ff
-    style B fill:#fff4e1
-    style C fill:#e1ffe1
 ```
 
 **关键设计**：
