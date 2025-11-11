@@ -23,14 +23,14 @@ class PlanetEstimator:
     def set_pocket_from_ligand(self, protein_pdb, ligand_sdf):
         try:
             self.pocket = ProteinPocket(protein_pdb=protein_pdb, ligand_sdf=ligand_sdf)
-        except:
+        except Exception:
             raise RuntimeError('The protein PDB file needs to be fixed')
         self.res_features = self.model.cal_res_features_helper(self.pocket.res_features, self.pocket.alpha_coordinates)
 
     def set_pocket_from_coordinate(self, protein_pdb, centeriod_x, centeriod_y, centeriod_z):
         try:
             self.pocket = ProteinPocket(protein_pdb, centeriod_x, centeriod_y, centeriod_z)
-        except:
+        except Exception:
             raise RuntimeError('The protein PDB file needs to be fixed')
         self.res_features = self.model.cal_res_features_helper(self.pocket.res_features, self.pocket.alpha_coordinates)
 

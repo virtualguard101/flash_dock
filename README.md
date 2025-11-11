@@ -27,13 +27,17 @@ pip install -r requirements.txt
 3. Start the application using the following command:  
 
    ```bash
-   streamlit run FlashDock.py
+   streamlit run main.py
    ```
 
    - Use uv:
 
       ```bash
-      uv run streamlit run FlashDock.py
+      uv run streamlit run main.py
       ```
 
 Ensure the file is in the correct location for the program to function properly.
+
+## License
+
+The original repository has no-license, but the owner of that has given permission to use the code for non-commercial purposes. Please access the [original repository](https://github.com/Neo-Flash/FLASH_DOCK) or contact the [owner](https://github.com/Neo-Flash) for details.

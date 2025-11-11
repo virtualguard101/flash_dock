@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from streamlit_molstar import st_molstar, st_molstar_rcsb, st_molstar_remote
+# from streamlit_molstar import st_molstar, st_molstar_rcsb, st_molstar_remote
 # 如需使用口袋预测相关函数
 from streamlit_molstar.pocket import (
     select_pocket_from_local_protein,
@@ -14,7 +14,7 @@ import json
 import subprocess
 import tempfile  # 用于创建临时文件
 import re
-import tqdm
+# import tqdm
 
 # 如果没有在 session_state 中记录 page，就初始化一个默认值
 if 'page' not in st.session_state:
@@ -290,7 +290,7 @@ elif page == "口袋预测":
 elif page == "分子对接":
     import tempfile
     import os
-    import shutil
+    # import shutil
 
     st.title("分子对接")
     st.write("请上传蛋白质 (PDB 格式) 和配体 (SDF 格式)，并设置对接参数。")
@@ -422,7 +422,7 @@ elif page == "分子对接":
                                 height=600
                             )
                         except Exception as e:
-                            st.error("处理结果文件时出错，请检查路径或权限。")
+                            st.error(f"处理结果文件时出错: {e}")
 
                     else:
                         st.error("分子对接失败！")
