@@ -220,7 +220,7 @@ elif page == "口袋预测":
                 # 调用 p2rank (或其他函数) ,读取该临时文件进行预测
                 selected = select_pocket_from_local_protein(
                     file_path,
-                    p2rank_home='./utils/p2rank_2.5/'
+                    p2rank_home='./utils/p2rank_2.5.1/'
                 )
                 # 预测完成后删除该临时文件
                 os.remove(file_path)
@@ -259,7 +259,7 @@ elif page == "口袋预测":
             # 调用 p2rank 做预测
             selected = select_pocket_from_local_protein(
                 "examples/pocket/protein.pdb", 
-                p2rank_home='./utils/p2rank_2.5/'
+                p2rank_home='./utils/p2rank_2.5.1/'
             )
             if selected:
                 pocket = selected
@@ -541,7 +541,7 @@ elif page == "批量口袋预测与对接":
                                         # 为每个任务传递唯一的 key
                                         pocket_result = select_pocket_from_local_protein(
                                             str(protein_path), 
-                                            p2rank_home='./others/p2rank_2.5/',
+                                            p2rank_home='./others/p2rank_2.5.1/',
                                             key=f"select_pocket_{i}"  # 添加唯一 key
                                         )
                                     except Exception as e:
