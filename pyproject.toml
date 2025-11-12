@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "ipython-genutils>=0.2.0",
+    "lmdb>=1.7.5",
     "matplotlib>=3.10.7",
     "py3dmol>=2.5.3",
     "rdkit>=2025.9.1",
