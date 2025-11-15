@@ -163,6 +163,16 @@ class Processor:
                 patoms += [atom_info['atom_name']]
                 pcoords = np.concatenate((pcoords, _rescoor), axis=0)
                 residues += [str(atom_info['chain_id'])+str(atom_info['residue_number'])]
+        
+        # 检查是否找到了任何原子
+        if len(patoms) == 0:
+            raise ValueError(
+                f"No protein atoms found in the docking grid box!\n"
+                f"Box center: ({pocket['center_x']:.2f}, {pocket['center_y']:.2f}, {pocket['center_z']:.2f})\n"
+                f"Box size: ({pocket['size_x']:.2f}, {pocket['size_y']:.2f}, {pocket['size_z']:.2f})\n"
+                f"Please check your docking grid parameters or perform pocket prediction first."
+            )
+        
         return patoms, pcoords, residues
 
     def extract_pocket(self, input_protein, input_docking_grid):

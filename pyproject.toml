@@ -5,16 +5,28 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "addict>=2.4.0",
+    "biopandas>=0.5.1",
     "ipython-genutils>=0.2.0",
+    "joblib>=1.4.0",
     "lmdb>=1.7.5",
     "matplotlib>=3.10.7",
+    "numpy>=1.22.4",
+    "pandas>=1.4.0",
     "py3dmol>=2.5.3",
+    "pyyaml>=6.0.0",
     "rdkit>=2025.9.1",
+    "scikit-learn>=1.7.2",
     "seaborn",
     "sh>=2.2.2",
     "stmol>=0.0.9",
     "streamlit>=1.51.0",
     "streamlit-ketcher>=0.0.1",
     "streamlit-molstar>=0.4.21",
+    "torch>=2.9.1",
     "tqdm>=4.67.1",
+    "unicore @ git+https://github.com/dptech-corp/Uni-Core.git",
 ]
+
+[tool.uv.extra-build-dependencies]
+unicore = ["torch"]

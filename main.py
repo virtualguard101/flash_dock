@@ -304,9 +304,10 @@ elif page == "分子对接":
     pocket_csv_file = st.file_uploader("上传口袋预测结果文件 (CSV)", type=["csv"])
 
     # 默认网格参数
-    center_x = 0.0
-    center_y = 0.0
-    center_z = 0.0
+    center_x = None
+    center_y = None
+    center_z = None
+    auto_calculated = False
 
     if pocket_csv_file is not None:
         try:
@@ -326,6 +327,36 @@ elif page == "分子对接":
                 st.warning("CSV 文件中未找到 Center 列,无法自动填充网格参数")
         except Exception as e:
             st.error(f"读取 CSV 文件时出现错误: {e}")
+    
+    # 如果用户上传了蛋白质但没有口袋预测结果，自动计算蛋白质质心
+    if protein_file is not None and center_x is None:
+        try:
+            from biopandas.pdb import PandasPdb
+            import io
+            
+            # 读取蛋白质文件并计算质心
+            pdb_content = io.BytesIO(protein_file.getvalue())
+            pmol = PandasPdb().read_pdb(pdb_content)
+            pdf = pmol.df['ATOM']
+            
+            center_x = float(pdf['x_coord'].mean())
+            center_y = float(pdf['y_coord'].mean())
+            center_z = float(pdf['z_coord'].mean())
+            auto_calculated = True
+            
+            st.info(f"✅ 已自动计算蛋白质质心作为对接网格中心: ({center_x:.2f}, {center_y:.2f}, {center_z:.2f})")
+            st.warning("⚠️ 建议先进行'口袋预测'以获得更准确的对接位点！")
+        except Exception as e:
+            st.warning(f"无法自动计算蛋白质质心: {e}，请手动输入对接网格参数")
+            center_x = 0.0
+            center_y = 0.0
+            center_z = 0.0
+    
+    # 设置默认值（如果仍然为 None）
+    if center_x is None:
+        center_x = 0.0
+        center_y = 0.0
+        center_z = 0.0
 
     # 显示网格参数输入框,无论是否上传 CSV 文件
     st.subheader("设置对接口袋参数")
@@ -426,10 +457,23 @@ elif page == "分子对接":
 
                     else:
                         st.error("分子对接失败！")
+                        
+                        # 检查是否是 pocket 为空的错误
+                        if "No protein atoms found in the docking grid box" in result.stderr or "Mean of empty slice" in result.stderr:
+                            st.error("❌ 在指定的对接网格范围内没有找到蛋白质原子！")
+                            st.warning("💡 可能的解决方案：")
+                            st.markdown("""
+                            1. **建议**：先进行"口袋预测"以获得准确的对接位点
+                            2. 检查对接网格的中心坐标是否正确
+                            3. 增大对接网格的尺寸（Size X/Y/Z）
+                            4. 确认上传的蛋白质文件格式正确
+                            """)
+                        
                         st.text_area("错误信息", value=result.stderr, height=150)
 
             except Exception as e:
                 st.error(f"对接过程出现错误: {e}")
+                st.warning("💡 提示：建议先进行'口袋预测'以获得准确的对接位点！")
 
 # ------------------------------------------------------------------------------
 # 批量口袋预测与对接
