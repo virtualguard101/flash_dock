@@ -25,8 +25,20 @@ dependencies = [
     "streamlit-molstar>=0.4.21",
     "torch>=2.9.1",
     "tqdm>=4.67.1",
-    "unicore @ git+https://github.com/dptech-corp/Uni-Core.git",
+    "unicore @ git+ssh://git@github.com/dptech-corp/Uni-Core.git",
 ]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = ["main"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["models*", "utils*"]
+exclude = ["lib", "tmp", "legacy", "result", "batch_docking", "examples"]
 
 [tool.uv.extra-build-dependencies]
 unicore = ["torch"]

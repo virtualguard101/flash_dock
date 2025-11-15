@@ -303,12 +303,36 @@ elif page == "分子对接":
     st.write("可选：上传口袋预测结果 CSV 文件,将自动填充对接网格参数")
     pocket_csv_file = st.file_uploader("上传口袋预测结果文件 (CSV)", type=["csv"])
 
-    # 默认网格参数
-    center_x = None
-    center_y = None
-    center_z = None
-    auto_calculated = False
+    # 初始化 session_state 中的网格参数（如果不存在）
+    if 'docking_center_x' not in st.session_state:
+        st.session_state.docking_center_x = None
+    if 'docking_center_y' not in st.session_state:
+        st.session_state.docking_center_y = None
+    if 'docking_center_z' not in st.session_state:
+        st.session_state.docking_center_z = None
+    if 'auto_calculated' not in st.session_state:
+        st.session_state.auto_calculated = False
+    if 'last_protein_name' not in st.session_state:
+        st.session_state.last_protein_name = None
 
+    # 检测蛋白质文件是否改变
+    current_protein_name = protein_file.name if protein_file is not None else None
+    protein_changed = (current_protein_name != st.session_state.last_protein_name)
+    
+    if protein_changed and protein_file is not None:
+        st.session_state.last_protein_name = current_protein_name
+        # 蛋白质文件改变了，重置坐标（如果没有口袋预测）
+        if pocket_csv_file is None:
+            st.session_state.docking_center_x = None
+            st.session_state.docking_center_y = None
+            st.session_state.docking_center_z = None
+
+    # 默认网格参数
+    center_x = st.session_state.docking_center_x
+    center_y = st.session_state.docking_center_y
+    center_z = st.session_state.docking_center_z
+
+    # 如果上传了口袋预测结果，优先使用
     if pocket_csv_file is not None:
         try:
             # 读取 CSV 文件并获取中心坐标
@@ -319,6 +343,11 @@ elif page == "分子对接":
                     coords = [float(c) for c in re.findall(r"[-+]?[0-9]*\.?[0-9]+", center_coords)]
                     if len(coords) == 3:
                         center_x, center_y, center_z = coords
+                        st.session_state.docking_center_x = center_x
+                        st.session_state.docking_center_y = center_y
+                        st.session_state.docking_center_z = center_z
+                        st.session_state.auto_calculated = False
+                        st.success(f"✅ 已从 CSV 文件读取口袋中心: ({center_x:.2f}, {center_y:.2f}, {center_z:.2f})")
                     else:
                         st.warning("CSV 文件中的 Center 格式不正确,无法自动填充网格参数")
                 else:
@@ -329,7 +358,7 @@ elif page == "分子对接":
             st.error(f"读取 CSV 文件时出现错误: {e}")
     
     # 如果用户上传了蛋白质但没有口袋预测结果，自动计算蛋白质质心
-    if protein_file is not None and center_x is None:
+    elif protein_file is not None and center_x is None:
         try:
             from biopandas.pdb import PandasPdb
             import io
@@ -339,41 +368,95 @@ elif page == "分子对接":
             pmol = PandasPdb().read_pdb(pdb_content)
             pdf = pmol.df['ATOM']
             
+            if len(pdf) == 0:
+                raise ValueError("PDB 文件中没有 ATOM 记录")
+            
             center_x = float(pdf['x_coord'].mean())
             center_y = float(pdf['y_coord'].mean())
             center_z = float(pdf['z_coord'].mean())
-            auto_calculated = True
+            
+            # 保存到 session_state
+            st.session_state.docking_center_x = center_x
+            st.session_state.docking_center_y = center_y
+            st.session_state.docking_center_z = center_z
+            st.session_state.auto_calculated = True
             
             st.info(f"✅ 已自动计算蛋白质质心作为对接网格中心: ({center_x:.2f}, {center_y:.2f}, {center_z:.2f})")
             st.warning("⚠️ 建议先进行'口袋预测'以获得更准确的对接位点！")
         except Exception as e:
-            st.warning(f"无法自动计算蛋白质质心: {e}，请手动输入对接网格参数")
+            st.error(f"❌ 无法自动计算蛋白质质心: {e}")
+            st.warning("请手动输入对接网格参数或先进行口袋预测")
             center_x = 0.0
             center_y = 0.0
             center_z = 0.0
+            st.session_state.docking_center_x = center_x
+            st.session_state.docking_center_y = center_y
+            st.session_state.docking_center_z = center_z
     
     # 设置默认值（如果仍然为 None）
     if center_x is None:
         center_x = 0.0
         center_y = 0.0
         center_z = 0.0
+        st.session_state.docking_center_x = center_x
+        st.session_state.docking_center_y = center_y
+        st.session_state.docking_center_z = center_z
 
     # 显示网格参数输入框,无论是否上传 CSV 文件
     st.subheader("设置对接口袋参数")
-    center_x = st.number_input("Center X", value=center_x)
-    center_y = st.number_input("Center Y", value=center_y)
-    center_z = st.number_input("Center Z", value=center_z)
+    
+    # 添加一个"重置为质心"按钮
+    col1, col2 = st.columns([3, 1])
+    with col2:
+        if protein_file is not None:
+            if st.button("🔄 重新计算质心"):
+                try:
+                    from biopandas.pdb import PandasPdb
+                    import io
+                    
+                    pdb_content = io.BytesIO(protein_file.getvalue())
+                    pmol = PandasPdb().read_pdb(pdb_content)
+                    pdf = pmol.df['ATOM']
+                    
+                    center_x = float(pdf['x_coord'].mean())
+                    center_y = float(pdf['y_coord'].mean())
+                    center_z = float(pdf['z_coord'].mean())
+                    
+                    st.session_state.docking_center_x = center_x
+                    st.session_state.docking_center_y = center_y
+                    st.session_state.docking_center_z = center_z
+                    st.session_state.auto_calculated = True
+                    
+                    st.success(f"✅ 已重新计算: ({center_x:.2f}, {center_y:.2f}, {center_z:.2f})")
+                except Exception as e:
+                    st.error(f"计算失败: {e}")
+    
+    center_x = st.number_input("Center X", value=float(center_x), format="%.2f", key="input_center_x")
+    center_y = st.number_input("Center Y", value=float(center_y), format="%.2f", key="input_center_y")
+    center_z = st.number_input("Center Z", value=float(center_z), format="%.2f", key="input_center_z")
 
     size_x = st.number_input("Size X", value=100.0)
     size_y = st.number_input("Size Y", value=100.0)
     size_z = st.number_input("Size Z", value=100.0)
 
-    # 当用户点击“开始分子对接”时,生成 docking_grid.json 文件并调用对接命令
+    # 当用户点击"开始分子对接"时,生成 docking_grid.json 文件并调用对接命令
     if st.button("开始分子对接"):
         # 如果没有上传蛋白质或配体,提示错误
         if not protein_file or not ligand_file:
             st.error("请先上传蛋白质 (pdb) 和配体 (sdf) 文件")
         else:
+            # 验证对接网格参数
+            if center_x == 0.0 and center_y == 0.0 and center_z == 0.0:
+                st.error("⚠️ 警告：对接网格中心为 (0, 0, 0)！")
+                st.warning("""
+                这可能导致对接失败。请：
+                1. 点击上方的 🔄 "重新计算质心" 按钮
+                2. 或先进行"口袋预测"以获得准确的对接位点
+                3. 或手动输入正确的对接网格中心坐标
+                """)
+            else:
+                st.info(f"📍 对接网格中心: ({center_x:.2f}, {center_y:.2f}, {center_z:.2f})")
+            
             try:
                 # 创建临时文件夹保存缓存文件
                 with tempfile.TemporaryDirectory() as temp_dir:
@@ -385,6 +468,9 @@ elif page == "分子对接":
                         "size_y": size_y,
                         "size_z": size_z
                     }
+                    
+                    # 调试信息：打印 docking_grid
+                    st.write("调试信息 - 对接网格参数：", docking_grid)
                     docking_grid_path = os.path.join(temp_dir, "docking_grid.json")
 
                     with open(docking_grid_path, "w") as f:
