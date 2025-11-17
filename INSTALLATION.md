@@ -1,11 +1,17 @@
 # Flash Dock 安装指南
 
+## 重要说明
+
+**PyTorch 版本**: 本项目使用 **PyTorch 2.5.1**（当前最新稳定版）。
+
+> ⚠️ 注意：之前的 requirements.txt 中错误地标注了 `torch==2.9.1`，但该版本不存在。已更正为 `2.5.1`。
+
 ## 依赖冲突解决方案
 
 ### 问题描述
 
 在服务器环境中可能遇到以下依赖冲突：
-- `torchaudio`/`torchvision` 版本与 torch 2.9.1 不兼容
+- `torchaudio`/`torchvision` 版本与 torch 不兼容
 - `xformers` 要求特定的 torch 版本
 - `transformers` 与新版 `huggingface-hub`/`tokenizers` 冲突
 - `datasets` 与新版 `fsspec` 冲突
@@ -29,8 +35,8 @@ conda activate flash_dock
 # 2. 先卸载冲突的包
 pip uninstall -y torch torchvision torchaudio xformers transformers datasets tokenizers huggingface-hub
 
-# 3. 重新安装 torch 2.9.1 及配套版本
-pip install torch==2.9.1 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+# 3. 重新安装 torch 2.5.1 及配套版本
+pip install torch==2.5.1 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 
 # 4. 安装 unicore
 pip install --no-build-isolation 'unicore @ git+ssh://git@github.com/dptech-corp/Uni-Core.git@ace6fae1c8479a9751f2bb1e1d6e4047427bc134'
@@ -39,15 +45,18 @@ pip install --no-build-isolation 'unicore @ git+ssh://git@github.com/dptech-corp
 pip install -r requirements.txt
 ```
 
-### 方案 3：使用 torch 2.3.0（如果必须使用 xformers）
+### 方案 3：快速修复当前环境
 
-如果项目必须使用 xformers 0.0.26.post1，则需要降级 torch：
+使用提供的修复脚本：
 
 ```bash
-# 修改 env.sh 中的 torch 版本为 2.3.0
-pip install torch==2.3.0 torchvision==0.18.0 torchaudio==2.3.0 --index-url https://download.pytorch.org/whl/cu121
-pip install xformers==0.0.26.post1
+bash fix_torch.sh
 ```
+
+该脚本会自动：
+- 卸载错误版本的 torch
+- 安装正确版本 (2.5.1)
+- 验证安装结果
 
 ### 方案 4：忽略依赖冲突（临时方案）
 

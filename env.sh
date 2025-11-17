@@ -7,12 +7,24 @@ conda create -n flash_dock python=3.11 -y
 conda activate flash_dock
 
 # 先安装 torch 及其相关组件（匹配版本）
-# 使用清华大学镜像源（国内更快）
-pip install torch==2.9.1 torchvision torchaudio --index-url https://mirrors.tuna.tsinghua.edu.cn/pytorch/whl/cu121
+echo "正在安装 PyTorch 2.5.1..."
 
-# 如果清华源不可用，可以尝试以下备选：
-# 阿里云镜像：pip install torch==2.9.1 torchvision torchaudio --index-url https://mirrors.aliyun.com/pytorch-wheels/cu121/
-# 官方源：pip install torch==2.9.1 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+# 尝试清华源（国内更快）
+pip install torch==2.5.1 torchvision torchaudio --index-url https://mirrors.tuna.tsinghua.edu.cn/pytorch/whl/cu121
+
+# 验证 torch 版本
+TORCH_VERSION=$(python -c "import torch; print(torch.__version__)" 2>/dev/null | cut -d+ -f1)
+if [ "$TORCH_VERSION" != "2.5.1" ]; then
+    echo "清华源版本不匹配 (安装了 $TORCH_VERSION)，切换到官方源..."
+    pip uninstall -y torch torchvision torchaudio
+    pip install torch==2.5.1 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+fi
+
+# 最终验证
+python -c "import torch; print(f'✓ PyTorch {torch.__version__} 安装成功')" || {
+    echo "❌ PyTorch 安装失败，请检查错误信息"
+    exit 1
+}
 
 # 卸载可能冲突的旧包
 pip uninstall -y xformers datasets transformers 2>/dev/null || true
