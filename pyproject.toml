@@ -3,7 +3,7 @@ name = "flash-dock"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 dependencies = [
     "addict>=2.4.0",
     "biopandas>=0.5.1",
@@ -15,7 +15,7 @@ dependencies = [
     "pandas>=1.4.0",
     "py3dmol>=2.5.3",
     "pyyaml>=6.0.0",
-    "rdkit>=2025.9.1",
+    "rdkit-pypi==2022.9.3",
     "scikit-learn>=1.7.2",
     "seaborn",
     "sh>=2.2.2",

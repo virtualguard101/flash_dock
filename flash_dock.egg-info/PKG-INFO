@@ -1,0 +1,71 @@
+Metadata-Version: 2.4
+Name: flash-dock
+Version: 0.1.0
+Summary: Add your description here
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: addict>=2.4.0
+Requires-Dist: biopandas>=0.5.1
+Requires-Dist: ipython-genutils>=0.2.0
+Requires-Dist: joblib>=1.4.0
+Requires-Dist: lmdb>=1.7.5
+Requires-Dist: matplotlib>=3.10.7
+Requires-Dist: numpy>=1.22.4
+Requires-Dist: pandas>=1.4.0
+Requires-Dist: py3dmol>=2.5.3
+Requires-Dist: pyyaml>=6.0.0
+Requires-Dist: rdkit-pypi==2022.9.3
+Requires-Dist: scikit-learn>=1.7.2
+Requires-Dist: seaborn
+Requires-Dist: sh>=2.2.2
+Requires-Dist: stmol>=0.0.9
+Requires-Dist: streamlit>=1.51.0
+Requires-Dist: streamlit-ketcher>=0.0.1
+Requires-Dist: streamlit-molstar>=0.4.21
+Requires-Dist: torch>=2.9.1
+Requires-Dist: tqdm>=4.67.1
+Requires-Dist: unicore@ git+ssh://git@github.com/dptech-corp/Uni-Core.git
+
+# Flash_Dock
+
+To use Flash_Dock, you need to download the `unimol_docking_v2_240517.pt` model file.
+
+## Requirements
+
+- Use uv
+
+```bash
+uv sync
+```
+
+- Use pip
+
+```bash
+pip install -r requirements.txt
+```
+
+## Steps:
+
+1. Download the model weights and install the required dependencies from the following link:  
+   [https://github.com/deepmodeling/Uni-Mol/tree/main/unimol_docking_v2](https://github.com/deepmodeling/Uni-Mol/tree/main/unimol_docking_v2)
+
+2. Place the file in the directory:  
+   `./others/Uni-Mol/unimol_docking_v2/`
+
+3. Start the application using the following command:  
+
+   ```bash
+   streamlit run main.py
+   ```
+
+   - Use uv:
+
+      ```bash
+      uv run streamlit run main.py
+      ```
+
+Ensure the file is in the correct location for the program to function properly.
+
+## License
+
+The original repository has no-license, but the owner of that has given permission to use the code for non-commercial purposes. Please access the [original repository](https://github.com/Neo-Flash/FLASH_DOCK) or contact the [owner](https://github.com/Neo-Flash) for details.
