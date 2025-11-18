@@ -492,7 +492,7 @@ elif page == "分子对接":
 
                     # 构造命令
                     command = (
-                        f"python ./models/Uni-Mol/unimol_docking_v2/interface/demo.py "
+                        f"conda run -n flashdock python ./models/Uni-Mol/unimol_docking_v2/interface/demo.py "
                         f"--mode single "
                         f"--conf-size 10 "
                         f"--cluster "
@@ -701,7 +701,7 @@ elif page == "批量口袋预测与对接":
 
                                             # 构造对接命令
                                             command = (
-                                                f"python ./models/Uni-Mol/unimol_docking_v2/interface/demo.py "
+                                                f"conda run -n flashdock python ./models/Uni-Mol/unimol_docking_v2/interface/demo.py "
                                                 f"--mode single "
                                                 f"--conf-size 10 "
                                                 f"--cluster "
@@ -809,7 +809,7 @@ elif page == "预测亲和力":
                                 pred_script_path = os.path.join(pred_dir, pred_script)
 
                                 cmd = [
-                                    "python",
+                                    "conda run -n flashdock python",
                                     pred_script_path,
                                     "-p", protein_path,
                                     "-l", ligand_path,
@@ -868,7 +868,7 @@ elif page == "预测亲和力":
                                         output_csv_path_tmp = os.path.join(tmpdir, "temp_result.csv")
 
                                         cmd = [
-                                            "python",
+                                            "conda run -n flashdock python",
                                             "./models/PLANET/pred.py",
                                             "-p", pdb_file,
                                             "-l", sdf_file_path,
