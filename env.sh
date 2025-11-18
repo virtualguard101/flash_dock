@@ -27,7 +27,7 @@ python -c "import torch; print(f'✓ PyTorch {torch.__version__} 安装成功')"
 }
 
 # 卸载可能冲突的旧包
-pip uninstall -y xformers datasets transformers 2>/dev/null || true
+# pip uninstall -y xformers datasets transformers 2>/dev/null || true
 
 # 安装 unicore（需要 torch，所以放在 torch 之后）
 pip install --no-build-isolation 'unicore @ git+ssh://git@github.com/dptech-corp/Uni-Core.git@ace6fae1c8479a9751f2bb1e1d6e4047427bc134'
@@ -36,7 +36,7 @@ pip install --no-build-isolation 'unicore @ git+ssh://git@github.com/dptech-corp
 pip install -r requirements.txt
 
 # 重新安装兼容的版本来解决冲突
-pip install --upgrade transformers datasets
+# pip install --upgrade transformers datasets
 
 # 如果需要 xformers，安装兼容版本（可选）
 # pip install xformers --no-deps || echo "xformers installation skipped"
